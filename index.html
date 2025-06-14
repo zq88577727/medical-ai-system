@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医学智能检索与决策支持助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .feature h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .chat-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .chat-header h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        
+        .chat-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            .header p {
+                font-size: 1em;
+            }
+            .chat-iframe {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部 -->
+        <div class="header">
+            <h1>🏥 医学智能检索与决策支持助手</h1>
+            <p>基于权威医学文献的智能检索平台，为临床决策提供循证医学支持</p>
+        </div>
+        
+        <!-- 功能特点 -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🔍</div>
+                <h3>智能检索</h3>
+                <p>快速检索专业医学文献，精准匹配查询需求</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💊</div>
+                <h3>循证支持</h3>
+                <p>基于权威指南提供可靠的诊疗建议</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🧠</div>
+                <h3>智能分析</h3>
+                <p>AI理解医学概念，提供专业解释</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚕️</div>
+                <h3>决策支持</h3>
+                <p>辅助临床决策，提高诊疗效率</p>
+            </div>
+        </div>
+        
+        <!-- 聊天界面 -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>💬 开始智能医学咨询</h2>
+                <p>请输入您的医学问题，系统将为您提供专业的检索结果和决策支持</p>
+            </div>
+            
+            <!-- 嵌入FastGPT医学问答系统 -->
+            <iframe 
+                class="chat-iframe"
+                src="https://share.fastgpt.in/chat/share?shareId=mlizcfzygw9g6kpr1kfip252"
+                title="医学智能问答系统"
+                frameborder="0"
+                allow="microphone; camera">
+            </iframe>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>© 2025 医学智能检索与决策支持助手 | 仅供医学参考，具体诊疗请咨询专业医生</p>
+        </div>
+    </div>
+</body>
+</html>
