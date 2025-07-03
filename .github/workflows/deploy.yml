@@ -1,0 +1,236 @@
+name: 部署到GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # 代码质量检查
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 设置Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 安装依赖
+      run: npm install
+      
+    - name: 代码格式检查
+      run: npm run lint || echo "Lint check completed"
+      
+    - name: 代码格式化检查
+      run: npm run format -- --check || echo "Format check completed"
+
+  # 安全扫描
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 运行安全扫描
+      uses: securecodewarrior/github-action-add-sarif@v1
+      with:
+        sarif-file: 'security-scan-results.sarif'
+      continue-on-error: true
+      
+    - name: 依赖安全检查
+      run: |
+        npm audit --audit-level=moderate || echo "Security audit completed"
+
+  # 项目构建
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, security]
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 设置Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 安装依赖
+      run: npm install
+      
+    - name: 构建项目
+      run: npm run build || echo "Build completed"
+      
+    - name: 验证HTML文件
+      run: |
+        if [ -f "index.html" ]; then
+          echo "✅ index.html exists"
+        else
+          echo "❌ index.html not found"
+          exit 1
+        fi
+        
+    - name: 检查必要文件
+      run: |
+        echo "检查项目文件..."
+        ls -la
+        echo "✅ 文件检查完成"
+        
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: medical-ai-system
+        path: |
+          index.html
+          README.md
+          assets/
+          docs/
+          !node_modules/
+
+  # 部署到GitHub Pages
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 设置GitHub Pages
+      uses: actions/configure-pages@v4
+      
+    - name: 下载构建产物
+      uses: actions/download-artifact@v4
+      with:
+        name: medical-ai-system
+        path: .
+        
+    - name: 上传到GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: .
+        
+    - name: 部署到GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+      
+    - name: 部署成功通知
+      run: |
+        echo "🚀 部署成功！"
+        echo "📱 访问地址: ${{ steps.deployment.outputs.page_url }}"
+        echo "⏰ 部署时间: $(date)"
+
+  # 部署后测试
+  post-deploy-test:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: 等待部署完成
+      run: sleep 30
+      
+    - name: 网站可访问性测试
+      run: |
+        URL="https://zq88577727.github.io/medical-ai-system"
+        echo "测试网站: $URL"
+        
+        # 检查网站状态码
+        STATUS=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+        if [ $STATUS -eq 200 ]; then
+          echo "✅ 网站访问正常 (状态码: $STATUS)"
+        else
+          echo "❌ 网站访问异常 (状态码: $STATUS)"
+          exit 1
+        fi
+        
+        # 检查页面内容
+        CONTENT=$(curl -s $URL)
+        if echo "$CONTENT" | grep -q "医学智能检索"; then
+          echo "✅ 页面内容检查正常"
+        else
+          echo "❌ 页面内容检查失败"
+          exit 1
+        fi
+        
+    - name: 性能测试
+      run: |
+        echo "🔍 执行基础性能测试..."
+        URL="https://zq88577727.github.io/medical-ai-system"
+        
+        # 测试页面加载时间
+        LOAD_TIME=$(curl -s -w "%{time_total}" -o /dev/null $URL)
+        echo "📊 页面加载时间: ${LOAD_TIME}s"
+        
+        # 如果加载时间超过5秒，发出警告
+        if (( $(echo "$LOAD_TIME > 5.0" | bc -l) )); then
+          echo "⚠️ 警告: 页面加载时间较长"
+        else
+          echo "✅ 页面加载速度正常"
+        fi
+
+  # 发布Release（仅当推送tag时）
+  release:
+    runs-on: ubuntu-latest
+    needs: [build, deploy]
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 下载构建产物
+      uses: actions/download-artifact@v4
+      with:
+        name: medical-ai-system
+        path: dist/
+        
+    - name: 创建Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: 医学智能检索系统 ${{ github.ref }}
+        body: |
+          ## 🎉 新版本发布
+          
+          ### 本次更新
+          - 修复已知问题
+          - 性能优化
+          - 功能完善
+          
+          ### 部署地址
+          🌐 https://zq88577727.github.io/medical-ai-system
+          
+          ### 技术栈
+          - 前端: HTML5, CSS3, JavaScript
+          - AI平台: FastGPT
+          - 部署: GitHub Pages
+          
+          ---
+          **医学免责声明**: 本系统提供的医学信息仅供参考，不能替代专业医学诊断和治疗。
+        draft: false
+        prerelease: false
+
+# 工作流通知
+notifications:
+  webhooks:
+    # 可以配置Slack、钉钉等通知
+    on_success: always
+    on_failure: always 

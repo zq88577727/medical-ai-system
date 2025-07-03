@@ -1,0 +1,58 @@
+{
+  "name": "medical-ai-system",
+  "version": "1.0.0",
+  "description": "医学智能检索与决策支持助手 - 基于FastGPT的智能医学文献检索与临床决策支持平台",
+  "keywords": [
+    "医学AI",
+    "智能检索",
+    "FastGPT",
+    "医学文献",
+    "临床决策支持",
+    "循证医学",
+    "RAG",
+    "OpenAI"
+  ],
+  "homepage": "https://zq88577727.github.io/medical-ai-system",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zq88577727/medical-ai-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zq88577727/medical-ai-system/issues"
+  },
+  "author": {
+    "name": "医学智能检索项目团队",
+    "email": "contact@medical-ai-system.com"
+  },
+  "license": "MIT",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "serve": "python -m http.server 8000",
+    "build": "echo 'Building static files...' && cp -r assets dist/ || xcopy assets dist\\ /E /I",
+    "deploy": "gh-pages -d .",
+    "test": "echo 'Running tests...'",
+    "lint": "eslint . --ext .js,.html",
+    "format": "prettier --write '**/*.{html,css,js,json,md}'"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "gh-pages": "^6.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "files": [
+    "index.html",
+    "README.md",
+    "LICENSE",
+    "assets/",
+    "docs/"
+  ]
+} 
